@@ -399,7 +399,7 @@ tr.score-row td:last-child{border-radius:0 0 var(--radius) 0}
             <tr data-tier="0"><td>EMTC, 0-min tier<span class="art">Table 3.2.2.93</span></td><td>8 storeys / 34 m (Group C) · 9 storeys / 38 m (Group D)</td><td>None on suites; 25 min (1 × 12.7 mm Type X) in corridors, exits and shafts; concealed spaces protected</td><td>Walls, ceilings, beams and columns</td><td>New in 2024 — the tier most 6–8 storey podium schemes fall in</td></tr>
             <tr data-tier="50"><td>EMTC, 50-min tier<span class="art">Art. 3.2.2.48 (C) / 3.2.2.57 (D) · 3.1.6.4</span></td><td>12 storeys / 42 m</td><td>50 min = 2 × 12.7 mm Type X (or 38 mm topping on the floor top)</td><td>Beams, columns and walls up to 35 % of the suite's perimeter wall area; ceilings 10 % (FSR ≤ 150) or 25 % (FSR ≤ 75); a fully exposed ceiling if beams/columns ≤ 20 % and walls are fully encapsulated</td><td>Combustible cladding limited to small, separated areas</td></tr>
             <tr data-tier="70"><td>EMTC, 70-min tier<span class="art">Table 3.2.2.93 · 3.1.6.4.(9) · 3.1.6.9</span></td><td>18 storeys / 76 m (Groups C and D)</td><td>70 min = 2 × 15.9 mm Type X on all timber; 50 min allowed on the top side of floors</td><td>None</td><td>Non-combustible cladding above 12 storeys; stair and elevator shafts above 55 m in EMTC or concrete</td></tr>
-            <tr data-tier="nc"><td>Non-combustible<span class="art">concrete, structural steel, steel stud</span></td><td>No storey cap</td><td>Inherent ratings (concrete) or fire protection on steel (spray, intumescent, gypsum boxing)</td><td>n/a — steel columns in the hybrids still need their own protection</td><td>High-building provisions (3.2.6) once the top floor is above 18 m</td></tr>
+            <tr data-tier="nc"><td>Non-combustible<span class="art">concrete, structural steel, steel stud</span></td><td>No storey cap</td><td>Inherent ratings (concrete) or fire protection on steel (spray, intumescent, gypsum boxing)</td><td>n/a — steel columns in the hybrids still need their own protection</td><td>High-building provisions (3.2.6) once the top floor is above 18 m (Group C) or 36 m (Group D; 18 m where the exit-width test in 3.2.6.1 fails)</td></tr>
           </tbody>
         </table>
       </div>
@@ -493,16 +493,16 @@ const DEFAULT_CRITERIA=[
    r:{lwf:2,rc:5,mt:4,h1:3,h2:4},
    notes:{
     lwf:'Combustible construction: every assembly is a rated gypsum assembly and the building is capped at 6 storeys / 18 m to the top floor, counting the podium level — five wood-frame floors over the podium (Art. 3.2.2.50 / 3.2.2.58, sprinklered).',
-    rc:'Non-combustible with inherent 2-hour ratings; no encapsulation and no storey cap (high-building provisions apply above 18 m).',
+    rc:'Non-combustible with inherent 2-hour ratings; no encapsulation and no storey cap. High-building provisions (3.2.6) apply once the top floor is above 18 m for Group C, or 36 m for Group D (18 m only where the exit-width test in 3.2.6.1 fails).',
     mt:'Up to 8 storeys (Group C) the 0-minute tier of Table 3.2.2.93 applies: timber can stay exposed except for 25 minutes of protection in corridors, exits and shafts. Above that, 50-minute (2 × 12.7 mm Type X) and then 70-minute encapsulation apply.',
     h1:'CLT floors follow the EMTC tier for the height; the steel columns and their bearing connectors need their own fire protection (spray, intumescent or gypsum boxing) to match the 2-hour floor rating.',
     h2:'CLT floors follow the EMTC tier. Steel-stud bearing walls are non-combustible but need gypsum both sides for their rating — which they have anyway.'
    }},
   {id:'grant',name:'Government grants (GWP)',hint:'Access to funding and policy incentives tied to lower embodied carbon',on:true,w:3,
-   r:{lwf:3,rc:1,mt:5,h1:4,h2:4},
+   r:{lwf:4,rc:1,mt:5,h1:4,h2:4},
    notes:{
-    lwf:'Lowest embodied carbon in absolute terms but "business as usual": it does not unlock mass timber demonstration funding, and VBBL 2025 asks 1–6 storey wood buildings for a 20 % embodied-carbon reduction against 10 % for others.',
-    rc:'Highest embodied carbon. Low-carbon mixes (PLC cement, SCMs) trim it, but there is no grant pathway and Vancouver\'s embodied-carbon limits tighten toward 2030.',
+    lwf:'Lowest embodied carbon in absolute terms, so it clears Vancouver\'s embodied-carbon target with margin: VBBL 2025 (Section 10.4) asks new Part 3 buildings of up to 6 storeys that can be built in wood for a 20 % reduction against the baseline (10 % for all other buildings) — a target set by building class, not by the material chosen. It is "business as usual" though, so it does not unlock mass timber demonstration funding.',
+    rc:'Highest embodied carbon, and at 6 storeys or fewer the building falls in VBBL 2025\'s 20 % reduction class (a low-rise that could have been built in wood), which concrete struggles to meet even with PLC cement and SCMs. No grant pathway, and Vancouver\'s limits tighten toward 2030.',
     mt:'Strongest fit for BC\'s Mass Timber Demonstration Program and NRCan\'s GCWood program (oversubscribed; MURB calls roughly yearly), plus municipal height and setback relaxations for mass timber.',
     h1:'Mass timber floors keep it eligible for the same programs; the steel columns add little GWP, and the point-supported hybrid can be pitched as a demonstration project.',
     h2:'CLT floors keep the biogenic-carbon story and program eligibility; steel studs are recyclable but carry more embodied carbon than wood walls.'
@@ -529,7 +529,7 @@ const DEFAULT_COST_NOTES={
   h1:'Same band as mass timber: no beams, but thicker two-way CLT panels, steel columns with fire protection and proprietary bearing connectors for punching shear.',
   h2:'Steel-stud bearing walls cost more than wood framing in BC\'s market; the CLT floors are the premium item.'
 };
-const KEY='ssm-state-v2';
+const KEY='ssm-state-v3';
 
 function clone(o){return JSON.parse(JSON.stringify(o));}
 function defaultState(){
@@ -555,9 +555,23 @@ function sanitize(s){
 }
 
 /* ------------------------------ code logic ------------------------------ */
+/* High-building provisions (Subsection 3.2.6) — Article 3.2.6.1.(1): Group C once the
+   floor of the top storey is more than 18 m above grade; Group D once it is more than
+   36 m, or more than 18 m where the occupant load ÷ (1.8 × exit-stair width) at any
+   storey exceeds 300. Storey counts assume ~3 m residential and ~3.6–3.8 m office
+   floor-to-floor, so 18 m ≈ 7 storeys (C) and 36 m ≈ 11 storeys (D). */
+function highBuildingChip(storeys,occ){
+  if(occ==='D'){
+    if(storeys>10)return ['','High-building provisions (3.2.6) likely — top floor above 36 m'];
+    if(storeys>6)return ['','3.2.6 only if the exit-width test fails (top floor 18–36 m)'];
+    return null;
+  }
+  return storeys>6?['','High-building provisions (3.2.6) likely — Group C floor above 18 m']:null;
+}
 function codeStatus(sys,storeys,occ){
+  const hb=highBuildingChip(storeys,occ);
   if(sys.kind==='nc'){
-    return {ok:true,tier:'nc',chips:[['ok','Non-combustible · no storey cap'],storeys>6?['','High-building provisions (3.2.6) likely — top floor above 18 m']:null]};
+    return {ok:true,tier:'nc',chips:[['ok','Non-combustible · no storey cap'],hb]};
   }
   if(sys.kind==='comb'){
     return storeys<=6
@@ -565,7 +579,6 @@ function codeStatus(sys,storeys,occ){
       : {ok:false,tier:'comb',chips:[['bad','Not permitted above 6 storeys'],['','Wood frame stops at 6 storeys / 18 m']]};
   }
   const zero=occ==='D'?9:8, zeroM=occ==='D'?38:34;
-  const hb=storeys>6?['','High-building provisions (3.2.6) likely']:null;
   if(storeys<=zero)return {ok:true,tier:0,chips:[['tier','EMTC · 0-min tier'],['','Timber may stay exposed · ≤ '+zero+' storeys / '+zeroM+' m'],hb]};
   if(storeys<=12)return {ok:true,tier:50,chips:[['tier','EMTC · 50-min tier'],['','2 × 12.7 mm Type X · ≤ 35 % walls, 10–25 % ceilings exposed'],hb]};
   if(storeys<=18)return {ok:true,tier:70,chips:[['tier','EMTC · 70-min tier'],['','2 × 15.9 mm Type X · non-combustible cladding'],hb]};

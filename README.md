@@ -45,6 +45,13 @@ Building By-law 2025 (in force 15 September 2025):
   3.2.2.58 (Group D), sprinklered.
 - EMTC: Table 3.2.2.93 and Articles 3.1.6.4–3.1.6.9 (encapsulation ratings, exposed timber
   allowances, cladding). 12-storey provisions in Articles 3.2.2.48 / 3.2.2.57.
+- High-building provisions (Subsection 3.2.6) are flagged per Article 3.2.6.1: Group C once
+  the top floor is above 18 m; Group D above 36 m, or above 18 m only where the exit-width
+  test fails. The app maps these to about 7 and 11 storeys respectively.
+- Embodied carbon: VBBL 2025 (Section 10.4) requires a 20 % reduction for new Part 3
+  buildings of up to 6 storeys that can be built in wood and 10 % for all others — a target
+  set by building class, not by the material chosen, so a low-rise concrete scheme carries
+  the 20 % target too.
 - Sources are linked at the bottom of the page. Confirm the applicable edition, occupancy
   mix and any alternative solutions with the authority having jurisdiction.
 
@@ -69,7 +76,7 @@ python build.py
 Python 3 standard library only; no dependencies. Open `index.html` directly or serve the
 folder with any static server. To change the default ratings, notes or systems, edit
 `DEFAULT_CRITERIA`, `DEFAULT_COST` and `SYSTEMS` in `src/template.html` and rebuild. If
-you change defaults, bump the `KEY` constant (`ssm-state-v2`) so browsers that saved the
+you change defaults, bump the `KEY` constant (`ssm-state-v3`) so browsers that saved the
 old defaults pick up the new ones.
 
 ## Deploy
