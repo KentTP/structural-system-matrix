@@ -1,0 +1,5 @@
+# generated fragment for the Claude Artifact publish (index.html is the deployable build)
+dist/
+__pycache__/
+.DS_Store
+Thumbs.db

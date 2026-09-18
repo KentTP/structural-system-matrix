@@ -1,0 +1,948 @@
+<title>Structural System Matrix</title>
+<style>
+/* ===================== Structural System Matrix ======================
+   Sense Engineering brand tokens (see assembly-load-calculator/assets/style.css)
+   so the office tools read as one family. */
+:root{
+  color-scheme:light;
+  --bg:#f9f9f7; --surface:#fcfcfb; --surface-2:#f3f2ee;
+  --line:rgba(11,11,11,.12); --line-soft:rgba(11,11,11,.07);
+  --text:#0b0b0b; --text-2:#52514e; --text-3:#6f6e69;
+  --brand-deep:#0050A0; --brand:#1078C0; --brand-light:#2090D0;
+  --accent:#1078C0; --accent-soft:rgba(16,120,192,.08); --accent-line:rgba(16,120,192,.38);
+  /* rating scale 1 (worst) -> 5 (best), red to green; the number and segment
+     count carry the value too, so colour is never the only cue */
+  --r1:#C62828; --r2:#E8710A; --r3:#D9A400; --r4:#7CB342; --r5:#2E7D32;
+  --danger:#C01818; --danger-soft:rgba(192,24,24,.08);
+  --radius:8px;
+  --shadow:0 1px 2px rgba(11,11,11,.05), 0 8px 24px rgba(11,11,11,.05);
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:"Helvetica Neue",Helvetica,Arial,system-ui,-apple-system,sans-serif;
+  --logo-light:block; --logo-dark:none;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0d0d0d; --surface:#1a1a19; --surface-2:#141413;
+    --line:rgba(255,255,255,.12); --line-soft:rgba(255,255,255,.07);
+    --text:#ffffff; --text-2:#c3c2b7; --text-3:#9d9b93;
+    --brand-deep:#0050A0; --brand:#2090D0; --brand-light:#4FB0E8;
+    --accent:#2090D0; --accent-soft:rgba(32,144,208,.14); --accent-line:rgba(32,144,208,.42);
+    --r1:#E5534B; --r2:#F28C28; --r3:#F0C040; --r4:#8BC34A; --r5:#43A047;
+    --danger:#D8453C; --danger-soft:rgba(216,69,60,.14);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --logo-light:none; --logo-dark:block;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0d0d0d; --surface:#1a1a19; --surface-2:#141413;
+  --line:rgba(255,255,255,.12); --line-soft:rgba(255,255,255,.07);
+  --text:#ffffff; --text-2:#c3c2b7; --text-3:#9d9b93;
+  --brand-deep:#0050A0; --brand:#2090D0; --brand-light:#4FB0E8;
+  --accent:#2090D0; --accent-soft:rgba(32,144,208,.14); --accent-line:rgba(32,144,208,.42);
+  --r1:#E5534B; --r2:#F28C28; --r3:#F0C040; --r4:#8BC34A; --r5:#43A047;
+  --danger:#D8453C; --danger-soft:rgba(216,69,60,.14);
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  --logo-light:none; --logo-dark:block;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 var(--sans);-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;font-weight:600}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.muted{color:var(--text-3)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ------------------------------ topbar ------------------------------ */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:9px 18px;background:var(--surface);border-bottom:2px solid var(--brand);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.logo{height:27px;width:auto;flex:none}
+.logo.on-light{display:var(--logo-light)}
+.logo.on-dark{display:var(--logo-dark)}
+.wordmark{display:none;font-size:17px;font-weight:700;letter-spacing:-0.02em;color:var(--brand-deep);white-space:nowrap}
+.wordmark em{font-style:italic;font-weight:400;color:var(--brand)}
+.brand.no-logo .logo{display:none}
+.brand.no-logo .wordmark{display:inline}
+.brand-rule{width:1px;align-self:stretch;background:var(--line);flex:none}
+.topbar h1{font-size:15px;font-weight:650;letter-spacing:-0.01em}
+.tag{margin:1px 0 0;font-size:11.5px;color:var(--text-2)}
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:12.5px;line-height:1.2}
+.btn:hover{border-color:var(--accent-line);background:var(--accent-soft)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand-deep);border-color:var(--brand-deep)}
+.btn.quiet{border-color:transparent;background:transparent;color:var(--text-2)}
+.btn.quiet:hover{background:var(--accent-soft);color:var(--text)}
+
+/* ------------------------------ layout ------------------------------ */
+.wrap{max-width:1240px;margin:0 auto;padding:18px 18px 40px;display:grid;gap:18px}
+.wrap>*{min-width:0}
+.card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px 0}
+.card-head h2{font-size:14px;letter-spacing:-0.01em}
+.card-head .meta{font-size:12px;color:var(--text-3)}
+.card-body{padding:12px 18px 16px}
+
+/* ------------------------------ scenario ------------------------------ */
+.scenario{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px;padding:16px 18px}
+.lede{margin:0;font-size:14.5px;line-height:1.5;max-width:60ch}
+.lede b{font-weight:650}
+.lede .sub{display:block;margin-top:6px;font-size:12.5px;color:var(--text-2)}
+.controls{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;justify-content:flex-end;min-width:0}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field>label{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3)}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.stepper button{width:30px;height:32px;border:0;background:transparent;font-size:16px;line-height:1;color:var(--text-2)}
+.stepper button:hover{background:var(--accent-soft);color:var(--text)}
+.stepper input{width:48px;height:32px;border:0;border-left:1px solid var(--line-soft);border-right:1px solid var(--line-soft);text-align:center;background:transparent;font-family:var(--mono);font-size:14px;-moz-appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+select.sel{height:32px;padding:0 28px 0 10px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--text-3) 50%),linear-gradient(135deg,var(--text-3) 50%,transparent 50%);background-position:calc(100% - 15px) 13px,calc(100% - 10px) 13px;background-size:5px 5px;background-repeat:no-repeat}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.seg button{height:32px;padding:0 12px;border:0;background:transparent;font-size:12.5px;color:var(--text-2)}
+.seg button+button{border-left:1px solid var(--line-soft)}
+.seg button.on{background:var(--brand);color:#fff}
+.seg button:not(.on):hover{background:var(--accent-soft);color:var(--text)}
+
+/* ------------------------------ chips ------------------------------ */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-size:11px;line-height:1.5;border:1px solid var(--line-soft);background:var(--surface-2);color:var(--text-2);white-space:nowrap}
+.chip.ok::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand)}
+.chip.bad{background:var(--danger-soft);border-color:transparent;color:var(--danger);font-weight:600}
+.chip.bad::before{content:"✕";font-size:10px}
+.chip.tier{background:var(--accent-soft);border-color:transparent;color:var(--brand-deep)}
+:root[data-theme="dark"] .chip.tier{color:var(--brand-light)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip.tier{color:var(--brand-light)}}
+
+/* ------------------------------ ranking ------------------------------ */
+.ranks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rank-row{display:grid;grid-template-columns:26px minmax(150px,220px) 1fr 86px;gap:12px;align-items:center;padding:6px 0}
+.rank-row.out{opacity:.55}
+.badge{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:12px;background:var(--surface-2);color:var(--text-2);border:1px solid var(--line-soft)}
+.rank-row:first-child .badge{background:var(--brand);color:#fff;border-color:var(--brand)}
+.rank-row.out .badge{background:transparent;color:var(--text-3)}
+.rank-name{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rank-name .n{font-weight:650;font-size:13.5px}
+.rank-name .s{font-size:11.5px;color:var(--text-3);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dollars{font-family:var(--mono);font-size:11.5px;letter-spacing:.5px}
+.dollars .off{color:var(--line)}
+.dollars .on{color:var(--text-2)}
+.track{height:14px;background:var(--surface-2);border-radius:0 4px 4px 0;position:relative;overflow:hidden}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--brand);border-radius:0 4px 4px 0;transition:width .35s ease}
+.rank-row:first-child .fill{background:var(--brand-deep)}
+:root[data-theme="dark"] .rank-row:first-child .fill{background:var(--brand-light)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rank-row:first-child .fill{background:var(--brand-light)}}
+.rank-score{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;text-align:right}
+.rank-score small{font-size:11px;color:var(--text-3)}
+.rank-note{font-size:12px;color:var(--text-3)}
+
+/* ------------------------------ matrix ------------------------------ */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.matrix{border-collapse:separate;border-spacing:0;width:100%;min-width:980px}
+.matrix th,.matrix td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line-soft)}
+.matrix thead th{padding:12px 12px 10px;background:var(--surface-2);font-weight:600;font-size:13px;border-bottom:1px solid var(--line)}
+.matrix thead th.c-crit{border-radius:var(--radius) 0 0 0}
+.matrix thead th:last-child{border-radius:0 var(--radius) 0 0}
+.matrix .c-crit{position:sticky;left:0;z-index:2;width:270px;min-width:270px;background:var(--surface);box-shadow:1px 0 0 var(--line-soft)}
+.matrix thead .c-crit{background:var(--surface-2)}
+.matrix .c-sys{width:150px;min-width:150px}
+.sys-name{font-size:13.5px;font-weight:650}
+.sys-sub{font-size:11.5px;color:var(--text-3);font-weight:400;line-height:1.35;margin-top:2px}
+.sys-code{margin-top:8px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.sys-code .chip{white-space:normal;line-height:1.35;padding:3px 8px}
+.crit-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.crit-head .btn{padding:4px 8px;font-size:11.5px}
+
+tr.crit-row th.c-crit{padding:10px 12px 10px 10px}
+.crit-inner{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:start}
+.crit-name{width:100%;border:1px solid transparent;border-radius:6px;padding:2px 6px;margin-left:-6px;background:transparent;font-weight:650;font-size:13.5px}
+.crit-name:hover{border-color:var(--line)}
+.crit-name:focus{border-color:var(--accent-line);background:var(--surface)}
+.crit-hint{font-size:11.5px;color:var(--text-3);line-height:1.35;margin-top:2px;font-weight:400}
+textarea.crit-hint{display:block;width:calc(100% + 6px);margin-left:-6px;padding:2px 6px;border:1px solid transparent;border-radius:6px;background:transparent;resize:none;overflow:hidden;font-family:inherit}
+textarea.crit-hint:hover{border-color:var(--line)}
+textarea.crit-hint:focus{border-color:var(--accent-line);background:var(--surface);color:var(--text-2)}
+#fireAutoChip{margin-left:2px}
+.crit-tools{display:flex;align-items:center;gap:6px;margin-top:6px}
+.weight{display:inline-flex;align-items:center;border:1px solid var(--line-soft);border-radius:6px;overflow:hidden;background:var(--surface-2)}
+.weight button{width:22px;height:22px;border:0;background:transparent;color:var(--text-2);font-size:13px;line-height:1}
+.weight button:hover{background:var(--accent-soft);color:var(--text)}
+.weight .w{min-width:58px;text-align:center;font-size:11px;color:var(--text-2);font-weight:400}
+.weight .w b{font-family:var(--mono);font-weight:600;color:var(--text)}
+.icon-btn{width:24px;height:24px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--text-3);display:grid;place-items:center;font-size:12px}
+.icon-btn:hover{border-color:var(--line);color:var(--text)}
+.icon-btn[aria-expanded="true"]{background:var(--accent-soft);color:var(--brand);border-color:var(--accent-line)}
+.icon-btn.danger:hover{color:var(--danger);border-color:var(--danger)}
+tr.crit-row.off th.c-crit .crit-name,tr.crit-row.off th.c-crit .crit-hint,tr.crit-row.off .weight{opacity:.45}
+tr.crit-row.off td.cell{opacity:.35}
+
+/* switch */
+.switch{position:relative;display:inline-block;width:34px;height:20px;flex:none;margin-top:1px}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.switch .trk{position:absolute;inset:0;border-radius:999px;background:var(--line);transition:background .15s}
+.switch .trk::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+.switch input:checked+.trk{background:var(--brand)}
+.switch input:checked+.trk::after{transform:translateX(14px)}
+.switch input:focus-visible+.trk{outline:2px solid var(--brand);outline-offset:2px}
+
+/* rating cells — colour follows the rating: 1 red … 5 green */
+td.cell{padding:10px 12px}
+td.cell[data-lvl="1"]{--rc:var(--r1)}td.cell[data-lvl="2"]{--rc:var(--r2)}td.cell[data-lvl="3"]{--rc:var(--r3)}td.cell[data-lvl="4"]{--rc:var(--r4)}td.cell[data-lvl="5"]{--rc:var(--r5)}
+.cell-inner{display:flex;align-items:center;gap:10px}
+.meter{display:inline-flex;gap:3px}
+.meter button{width:16px;height:14px;padding:0;border:0;border-radius:2px;background:var(--line);transition:background .12s,transform .12s}
+.meter button.on{background:var(--rc,var(--brand))}
+.meter button:hover{transform:scaleY(1.25)}
+.meter:hover button{background:var(--line)}
+.meter[data-hov="1"] button.hov{background:var(--r1)}.meter[data-hov="2"] button.hov{background:var(--r2)}.meter[data-hov="3"] button.hov{background:var(--r3)}.meter[data-hov="4"] button.hov{background:var(--r4)}.meter[data-hov="5"] button.hov{background:var(--r5)}
+.meter[data-hov] button.hov:not(.on){opacity:.55}
+.val{font-family:var(--mono);font-size:14px;min-width:12px}
+td.cell.na .meter button{background:var(--line-soft)}
+td.cell.na .val{color:var(--text-3)}
+.lead-dot{width:6px;height:6px;border-radius:50%;background:var(--text-2);margin-left:-4px;opacity:0}
+td.cell.lead .lead-dot{opacity:1}
+
+/* notes rows — one cell per system, so each note sits under its column */
+tr.notes-row th.c-crit,tr.notes-row td{padding:0 12px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tr.notes-row th.c-crit{padding-left:52px}
+tr.crit-row:has(+ tr.notes-row:not([hidden])) th,tr.crit-row:has(+ tr.notes-row:not([hidden])) td,tr.cost-row:has(+ tr.notes-row:not([hidden])) th,tr.cost-row:has(+ tr.notes-row:not([hidden])) td{border-bottom:0}
+tr.notes-row .lbl{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3);padding-top:8px;font-weight:600}
+tr.notes-row textarea{display:block;width:100%;min-height:74px;resize:vertical;border:1px solid var(--line-soft);border-radius:6px;padding:7px 8px;background:var(--surface-2);font-size:12px;line-height:1.4;color:var(--text-2)}
+tr.notes-row textarea:focus{border-color:var(--accent-line);background:var(--surface);color:var(--text)}
+.matrix tfoot tr.notes-row th.c-crit,.matrix tfoot tr.notes-row td{background:var(--surface-2);border-top:0}
+.matrix tfoot tr.notes-row textarea{background:var(--surface)}
+
+/* foot rows */
+.matrix tfoot th,.matrix tfoot td{background:var(--surface-2);border-top:1px solid var(--line)}
+.matrix tfoot .c-crit{background:var(--surface-2)}
+tr.cost-row th.c-crit,tr.cost-row td{padding:10px 12px}
+.cost-sel{display:inline-flex;gap:2px}
+.cost-sel button{width:17px;height:22px;padding:0;border:0;background:transparent;font-family:var(--mono);font-size:14px;color:var(--line);border-radius:3px}
+.cost-sel button.on{color:var(--text)}
+.cost-sel button:hover{background:var(--accent-soft)}
+.cost-sel:hover button{color:var(--line)}
+.cost-sel:hover button.hov{color:var(--brand)}
+tr.score-row th.c-crit,tr.score-row td{padding:12px 12px 14px;border-bottom:0}
+tr.score-row th.c-crit{border-radius:0 0 0 var(--radius)}
+tr.score-row td:last-child{border-radius:0 0 var(--radius) 0}
+.score{display:flex;align-items:baseline;gap:6px}
+.score b{font-family:var(--mono);font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.score .den{font-size:11px;color:var(--text-3)}
+.score .rk{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--text-2);background:var(--surface);border:1px solid var(--line-soft);border-radius:999px;padding:1px 7px}
+.score .rk.top{background:var(--brand);color:#fff;border-color:var(--brand)}
+.score-sub{font-size:11.5px;color:var(--text-3);margin-top:3px}
+.matrix-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 18px 14px;border-top:1px solid var(--line-soft)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-3);align-items:center}
+.legend .k{display:inline-flex;gap:3px;vertical-align:middle;margin-right:6px}
+.legend .k i{width:10px;height:9px;border-radius:2px;background:var(--line)}
+.legend .k i.r1{background:var(--r1)}.legend .k i.r2{background:var(--r2)}.legend .k i.r3{background:var(--r3)}.legend .k i.r4{background:var(--r4)}.legend .k i.r5{background:var(--r5)}
+
+/* ------------------------------ code reference ------------------------------ */
+.code-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.code-table th,.code-table td{padding:8px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top;text-align:left}
+.code-table th{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3);font-weight:600;background:var(--surface-2)}
+.code-table td:first-child{font-weight:600;white-space:nowrap}
+.code-table tr.hl td{background:var(--accent-soft)}
+.code-table .art{font-family:var(--mono);font-size:11px;color:var(--text-3);display:block;margin-top:2px}
+.sources{margin:12px 0 0;padding-left:18px;font-size:12px;color:var(--text-2);columns:2;column-gap:24px}
+.sources li{margin-bottom:4px;break-inside:avoid}
+.fineprint{font-size:11.5px;color:var(--text-3);margin:10px 0 0;line-height:1.45}
+
+/* ------------------------------ toast / misc ------------------------------ */
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:12.5px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.fallback{position:fixed;inset:0;background:rgba(0,0,0,.4);display:grid;place-items:center;z-index:60;padding:18px}
+.fallback .box{background:var(--surface);border-radius:var(--radius);padding:16px;max-width:560px;width:100%;display:grid;gap:10px}
+.fallback textarea{width:100%;height:120px;font-family:var(--mono);font-size:11px}
+
+@media (max-width:980px){
+  .scenario{grid-template-columns:1fr}
+  .controls{justify-content:flex-start}
+}
+@media (max-width:820px){
+  .topbar{flex-wrap:wrap;gap:8px 24px;padding:8px 14px}
+  .topbar-actions{width:100%;justify-content:flex-start;gap:2px}
+  .topbar-actions .btn{padding:5px 8px}
+  .rank-row{grid-template-columns:26px minmax(120px,1fr) 70px;grid-template-areas:"b n s" "b t t";row-gap:6px}
+  .rank-row .badge{grid-area:b;align-self:start;margin-top:1px}.rank-row .rank-name{grid-area:n}.rank-row .track{grid-area:t}.rank-row .rank-score{grid-area:s;align-self:start}
+  .wrap{padding:14px 16px 32px}
+  .sources{columns:1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{
+  .topbar-actions,.matrix-foot .btn,.crit-tools .icon-btn.danger,.stepper button,.weight button,.seg,.fallback{display:none!important}
+  .topbar{position:static}
+  .card{box-shadow:none;break-inside:avoid}
+  tr.notes-row[hidden]{display:table-row!important}
+  .table-wrap{overflow:visible}
+  table.matrix{min-width:0}
+  body{background:#fff}
+}
+</style>
+
+<header class="topbar">
+  <div class="brand" id="brand">
+    <!-- The Sense logo is painted from embedded PNG bytes (see paintLogos) so it
+         renders in the Artifact viewer, which blocks data: and relative images. -->
+    <canvas class="logo on-light" width="320" height="95" role="img" aria-label="Sense Engineering"></canvas>
+    <canvas class="logo on-dark" width="320" height="95" role="img" aria-label="Sense Engineering"></canvas>
+    <span class="wordmark" aria-hidden="true">sense <em>engineering</em></span>
+    <span class="brand-rule"></span>
+    <div>
+      <h1>Structural System Matrix</h1>
+      <p class="tag">Weighted decision matrix · podium + basement schemes · BC Building Code 2024 / VBBL 2025</p>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn quiet" id="btnLink" title="Copy a link that reopens this page with the current ratings, weights and toggles">Copy share link</button>
+    <button class="btn quiet" id="btnCopy" title="Copy the matrix as tab-separated text for Excel">Copy table</button>
+    <button class="btn quiet" id="btnPrint">Print</button>
+    <button class="btn quiet" id="btnReset">Reset</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="card scenario">
+    <p class="lede"><b>Every option sits on the same base:</b> a reinforced-concrete podium at Level 1 over one level of parking basement. Only the structure above the podium changes, so the ratings compare the upper floors and how they load the podium, foundations and basement box.
+      <span class="sub">Rate each system 1 (worst) to 5 (best) per criterion, switch criteria on or off, weight the ones that matter, and add a cost rating. Defaults are Sense's engineering view for a Metro Vancouver site — edit anything.</span></p>
+    <div class="controls">
+      <div class="field">
+        <label for="storeys">Storeys above grade (with podium)</label>
+        <div class="stepper">
+          <button type="button" id="stDown" aria-label="Fewer storeys">−</button>
+          <input type="number" id="storeys" min="2" max="30" value="6" aria-label="Storeys above grade">
+          <button type="button" id="stUp" aria-label="More storeys">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="occ">Major occupancy</label>
+        <select class="sel" id="occ">
+          <option value="C">Residential (Group C)</option>
+          <option value="D">Office (Group D)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Encapsulation ratings</label>
+        <div class="seg" id="fireMode" role="group" aria-label="Encapsulation rating mode">
+          <button type="button" data-mode="auto" class="on" title="Set the Encapsulation row from the BC code tier for the storey count">Follow code tiers</button>
+          <button type="button" data-mode="manual" title="Keep whatever you enter in the Encapsulation row">Manual</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card results">
+    <div class="card-head">
+      <h2>Ranking</h2>
+      <div class="meta" id="rankMeta"></div>
+    </div>
+    <div class="card-body">
+      <ol class="ranks" id="ranks"></ol>
+      <p class="rank-note" id="rankNote"></p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="table-wrap">
+      <table class="matrix" id="matrix">
+        <thead>
+          <tr>
+            <th class="c-crit">
+              <div class="crit-head">
+                <span>Criterion · weight</span>
+                <button type="button" class="btn" id="btnNotes">Show rationale</button>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+        <tfoot>
+          <tr class="cost-row" id="costRow"></tr>
+          <tr class="score-row" id="scoreRow"></tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="matrix-foot">
+      <div class="legend">
+        <span><span class="k"><i class="r1"></i><i class="r2"></i><i class="r3"></i><i class="r4"></i><i class="r5"></i></span>1 (worst) → 5 (best) · click a segment to rate</span>
+        <span><span class="lead-dot" style="opacity:1;margin:0 6px 0 0;display:inline-block;vertical-align:middle"></span>leads the criterion</span>
+        <span>Switched-off rows are greyed and left out of the score</span>
+      </div>
+      <button type="button" class="btn" id="btnAdd">+ Add criterion</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>How high can each system go in BC?</h2>
+      <div class="meta">BC Building Code 2024, Revision 1 (in force 10 April 2024) · adopted in the Vancouver Building By-law 2025 (in force 15 Sept 2025)</div>
+    </div>
+    <div class="card-body">
+      <div class="table-wrap">
+        <table class="code-table" id="codeTable">
+          <thead>
+            <tr><th>Construction</th><th>Storey / height limit</th><th>Encapsulation required</th><th>Timber that may stay exposed</th><th>Also note</th></tr>
+          </thead>
+          <tbody>
+            <tr data-tier="comb"><td>Light wood frame<span class="art">combustible construction · Art. 3.2.2.50 (C) / 3.2.2.58 (D)</span></td><td>6 storeys and 18 m to the top floor</td><td>Rated gypsum assemblies throughout (typically 1 h floors and walls)</td><td>None — structure is concealed</td><td>Sprinklered; limits on combustible cladding and building area per storey</td></tr>
+            <tr data-tier="0"><td>EMTC, 0-min tier<span class="art">Table 3.2.2.93</span></td><td>8 storeys / 34 m (Group C) · 9 storeys / 38 m (Group D)</td><td>None on suites; 25 min (1 × 12.7 mm Type X) in corridors, exits and shafts; concealed spaces protected</td><td>Walls, ceilings, beams and columns</td><td>New in 2024 — the tier most 6–8 storey podium schemes fall in</td></tr>
+            <tr data-tier="50"><td>EMTC, 50-min tier<span class="art">Art. 3.2.2.48 (C) / 3.2.2.57 (D) · 3.1.6.4</span></td><td>12 storeys / 42 m</td><td>50 min = 2 × 12.7 mm Type X (or 38 mm topping on the floor top)</td><td>Beams, columns and walls up to 35 % of the suite's perimeter wall area; ceilings 10 % (FSR ≤ 150) or 25 % (FSR ≤ 75); a fully exposed ceiling if beams/columns ≤ 20 % and walls are fully encapsulated</td><td>Combustible cladding limited to small, separated areas</td></tr>
+            <tr data-tier="70"><td>EMTC, 70-min tier<span class="art">Table 3.2.2.93 · 3.1.6.4.(9) · 3.1.6.9</span></td><td>18 storeys / 76 m (Groups C and D)</td><td>70 min = 2 × 15.9 mm Type X on all timber; 50 min allowed on the top side of floors</td><td>None</td><td>Non-combustible cladding above 12 storeys; stair and elevator shafts above 55 m in EMTC or concrete</td></tr>
+            <tr data-tier="nc"><td>Non-combustible<span class="art">concrete, structural steel, steel stud</span></td><td>No storey cap</td><td>Inherent ratings (concrete) or fire protection on steel (spray, intumescent, gypsum boxing)</td><td>n/a — steel columns in the hybrids still need their own protection</td><td>High-building provisions (3.2.6) once the top floor is above 18 m</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fineprint">EMTC = encapsulated mass timber construction. Storeys are counted above grade, so the parking basement does not count but the podium level does. Every EMTC building must be sprinklered and floors carry a 2-hour fire-resistance rating. Steel columns or steel-stud walls used with CLT floors are non-combustible construction and may be combined with EMTC in the same building (3.2.2.93.(2)). Confirm the applicable edition, occupancy mix and any alternative solutions with the authority having jurisdiction and a code consultant before relying on these tiers.</p>
+      <ul class="sources">
+        <li><a href="https://news.gov.bc.ca/releases/2024HOUS0055-000522" target="_blank" rel="noopener">B.C. builders can now use mass timber in taller buildings — BC Gov News, 10 April 2024</a></li>
+        <li><a href="https://www2.gov.bc.ca/assets/gov/farming-natural-resources-and-industry/construction-industry/building-codes-and-standards/revisions-and-mo/bcbc_emtc_code_change_convenience_copy.pdf" target="_blank" rel="noopener">BC Building Code 2024 Revision 1 — EMTC code change convenience copy (Table 3.2.2.93, Articles 3.1.6.4–3.1.6.9)</a></li>
+            <li><a href="https://aibc.ca/2024/05/bc-codes-update-for-mass-timber-construction/" target="_blank" rel="noopener">AIBC — BC Codes update for mass timber construction</a></li>
+        <li><a href="https://vancouver.ca/your-government/vancouver-building-bylaw.aspx" target="_blank" rel="noopener">City of Vancouver — Vancouver Building By-law 2025</a></li>
+        <li><a href="https://vancouver.ca/files/cov/embodied-carbon-guidelines.pdf" target="_blank" rel="noopener">City of Vancouver — Embodied Carbon Guidelines (VBBL reduction targets)</a></li>
+        <li><a href="https://www.naturallywood.com/mass-timber-demonstration-program/" target="_blank" rel="noopener">BC Mass Timber Demonstration Program</a></li>
+        <li><a href="https://natural-resources.canada.ca/gcwood" target="_blank" rel="noopener">NRCan — Green Construction through Wood (GCWood) program</a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ------------------------------ data ------------------------------ */
+const SYSTEMS=[
+  {id:'lwf',name:'Wood Frame',sub:'Light wood-frame bearing walls, I-joist or open-web floors',kind:'comb'},
+  {id:'rc',name:'Concrete',sub:'RC flat-plate slabs with RC columns',kind:'nc'},
+  {id:'mt',name:'Mass Timber',sub:'Glulam post-and-beam with CLT floors',kind:'emtc'},
+  {id:'h1',name:'Hybrid 1',sub:'Steel columns with point-supported CLT floor panels — no beams',kind:'emtc'},
+  {id:'h2',name:'Hybrid 2',sub:'Load-bearing steel-stud walls with CLT floor panels',kind:'emtc'}
+];
+const SYS_IDS=SYSTEMS.map(s=>s.id);
+
+const DEFAULT_CRITERIA=[
+  {id:'found',name:'Foundations',hint:'Footing and podium size driven by the weight above and the seismic demand it generates',on:true,w:3,
+   r:{lwf:5,rc:1,mt:4,h1:4,h2:4},
+   notes:{
+    lwf:'Lightest option (about 1.5–2 kPa per floor plus light walls): the least gravity load and seismic mass on the podium and footings. Plywood shear walls are ductile (Rd·Ro = 5.1), which keeps base shear low.',
+    rc:'Heaviest option (about 6–7 kPa per floor). Largest gravity loads and seismic mass, so the biggest footings or raft and podium columns; ductile shear walls help, but the mass dominates.',
+    mt:'CLT floors with a thin topping (about 3 kPa per floor) — roughly half the mass of concrete. CLT shear walls have a low Rd·Ro (3.0), so base shear is higher than the weight alone suggests; carrying a concrete core up from the podium avoids that.',
+    h1:'Light CLT floors bearing directly on steel columns: low mass, but point-supported CLT needs a tight column grid (about 3–4.5 m) that will not match the parking bays, so the podium becomes a transfer slab with many column loads.',
+    h2:'Light system: steel-stud bearing walls plus CLT floors. Closely spaced bearing walls rarely line up with parking bays, so the podium transfer slab picks up the wall lines.'
+   }},
+  {id:'tank',name:'Basement tanking',hint:'Resisting buoyancy of the basement box with a high water table — heavier structure means more ballast',on:true,w:3,
+   r:{lwf:1,rc:5,mt:3,h1:3,h2:2},
+   notes:{
+    lwf:'Least ballast: each wood-frame floor adds only about 2 kPa (roughly 10 kPa for five storeys), so the basement relies on its own weight, a thicker base slab, or tie-downs and tension piles to resist uplift.',
+    rc:'Most ballast: about 6 kPa per floor (roughly 30 kPa for five storeys) — usually enough to hold the box down without tension piles or rock anchors.',
+    mt:'Moderate ballast: about 3 kPa per floor (roughly 15 kPa for five storeys). Uplift often still needs a heavier raft or anchors, but less than for wood frame.',
+    h1:'Moderate ballast, similar to mass timber. Column loads can hold the raft down locally, but the slab between columns has to span the uplift pressure.',
+    h2:'Light system with little ballast; expect uplift anchors or a thickened base slab where the water table is high.'
+   }},
+  {id:'speed',name:'Speed of construction',hint:'Time from podium complete to superstructure closed in',on:true,w:3,
+   r:{lwf:3,rc:2,mt:5,h1:5,h2:4},
+   notes:{
+    lwf:'Site-framed with a small crew; framing is weather-exposed and needs drying time before close-in. Panelised walls shorten it.',
+    rc:'Slowest above the podium: formwork, pour and cure cycles, shoring and reshoring through three floors, and drying before finishes go in.',
+    mt:'Fastest: prefabricated panels crane in floor by floor with a small crew and little site waste; 20–25 % schedule savings against concrete are typical.',
+    h1:'Very fast — only two prefabricated elements (steel columns and CLT panels) and no beams to place, so erection runs a floor every few days. Fire protection to the columns adds a step.',
+    h2:'Fast when the steel-stud walls are panelised off site; site-assembled studs run closer to wood framing. CLT floors install quickly.'
+   }},
+  {id:'mep',name:'MEP flexibility',hint:'How easily services route through the structure now and change later',on:true,w:3,
+   r:{lwf:3,rc:4,mt:2,h1:4,h2:2},
+   notes:{
+    lwf:'Services run inside open-web floor trusses and stud cavities and are easy to change later, but bearing walls limit where risers and long horizontal runs can go.',
+    rc:'Flat soffits and dropped ceilings put services anywhere, and coring is routine (avoiding PT tendons). Best flexibility for future tenant changes.',
+    mt:'The exposed soffit that sells mass timber leaves nowhere to hide services; beams interrupt runs and CLT penetrations need engineering. Usually solved with raised floors, bulkheads or corridor ceilings.',
+    h1:'No beams: the flat CLT soffit gives a clean plenum much like a concrete flat plate, so services run freely below it. Penetrations close to the columns are restricted (punching-shear zone), and wherever the timber is left exposed the services still have to go somewhere.',
+    h2:'Closely spaced bearing walls and CLT floors constrain both risers and horizontal runs; services fit inside the stud walls but not in the floor.'
+   }},
+  {id:'acou',name:'Acoustics',hint:'Airborne and impact performance between suites (STC / IIC) for a given build-up',on:true,w:3,
+   r:{lwf:3,rc:5,mt:3,h1:3,h2:3},
+   notes:{
+    lwf:'Proven rated assemblies (gypcrete topping, resilient channels, insulation) reach STC and IIC 50+, but flanking and low-frequency impact noise need care.',
+    rc:'Mass wins: a 200 mm slab and concrete demising walls give STC 55+ and good impact performance with little added build-up.',
+    mt:'Bare CLT is light (STC about 40); floors need a concrete topping, acoustic mat and often a ceiling to reach STC/IIC 50+. Low-frequency footfall is the known weak point.',
+    h1:'Same CLT floor build-up as mass timber. The column-to-panel bearings are discrete points, so flanking is easier to control than through beams and walls.',
+    h2:'CLT floors as above. Steel-stud party walls perform well as double-stud walls, but light walls need insulation and resilient layers to control flanking.'
+   }},
+  {id:'aesth',name:'Aesthetics',hint:'What the structure itself contributes to the look of the spaces',on:true,w:3,
+   r:{lwf:2,rc:3,mt:5,h1:4,h2:3},
+   notes:{
+    lwf:'The structure is fully concealed behind gypsum; character comes only from applied finishes and the façade.',
+    rc:'Exposed concrete can be a feature (board-formed, polished) and slim flat-plate edges suit floor-to-ceiling glazing, but most residential concrete ends up finished over.',
+    mt:'Warm exposed timber is the main selling point; in the 0-minute tier most surfaces can stay exposed.',
+    h1:'Flat exposed CLT ceilings with no beams and slender steel columns give a clean, warm character; the columns need boxing or intumescent paint.',
+    h2:'CLT ceilings can be exposed; the stud walls are always clad, so the timber reads only overhead.'
+   }},
+  {id:'fire',name:'Encapsulation (fire)',hint:'How much fire protection the code makes you wrap the structure in — and whether the height is allowed at all',on:true,w:3,
+   r:{lwf:2,rc:5,mt:4,h1:3,h2:4},
+   notes:{
+    lwf:'Combustible construction: every assembly is a rated gypsum assembly and the building is capped at 6 storeys / 18 m to the top floor, counting the podium level — five wood-frame floors over the podium (Art. 3.2.2.50 / 3.2.2.58, sprinklered).',
+    rc:'Non-combustible with inherent 2-hour ratings; no encapsulation and no storey cap (high-building provisions apply above 18 m).',
+    mt:'Up to 8 storeys (Group C) the 0-minute tier of Table 3.2.2.93 applies: timber can stay exposed except for 25 minutes of protection in corridors, exits and shafts. Above that, 50-minute (2 × 12.7 mm Type X) and then 70-minute encapsulation apply.',
+    h1:'CLT floors follow the EMTC tier for the height; the steel columns and their bearing connectors need their own fire protection (spray, intumescent or gypsum boxing) to match the 2-hour floor rating.',
+    h2:'CLT floors follow the EMTC tier. Steel-stud bearing walls are non-combustible but need gypsum both sides for their rating — which they have anyway.'
+   }},
+  {id:'grant',name:'Government grants (GWP)',hint:'Access to funding and policy incentives tied to lower embodied carbon',on:true,w:3,
+   r:{lwf:3,rc:1,mt:5,h1:4,h2:4},
+   notes:{
+    lwf:'Lowest embodied carbon in absolute terms but "business as usual": it does not unlock mass timber demonstration funding, and VBBL 2025 asks 1–6 storey wood buildings for a 20 % embodied-carbon reduction against 10 % for others.',
+    rc:'Highest embodied carbon. Low-carbon mixes (PLC cement, SCMs) trim it, but there is no grant pathway and Vancouver\'s embodied-carbon limits tighten toward 2030.',
+    mt:'Strongest fit for BC\'s Mass Timber Demonstration Program and NRCan\'s GCWood program (oversubscribed; MURB calls roughly yearly), plus municipal height and setback relaxations for mass timber.',
+    h1:'Mass timber floors keep it eligible for the same programs; the steel columns add little GWP, and the point-supported hybrid can be pitched as a demonstration project.',
+    h2:'CLT floors keep the biogenic-carbon story and program eligibility; steel studs are recyclable but carry more embodied carbon than wood walls.'
+   }},
+  {id:'bio',name:'Biophilic design',hint:'Natural material visible to occupants without adding finishes',on:true,w:3,
+   r:{lwf:2,rc:1,mt:5,h1:4,h2:3},
+   notes:{
+    lwf:'No visible structure; biophilic character has to be added with finishes, planting and daylight.',
+    rc:'Least natural expression; biophilic content relies entirely on landscape, finishes and glazing.',
+    mt:'Visible wood throughout — the material itself delivers the response, with documented stress and wellbeing benefits.',
+    h1:'Flat exposed CLT ceilings provide most of the effect; the steel columns are neutral.',
+    h2:'Exposed CLT overhead; the clad stud walls dilute the effect compared with full mass timber.'
+   }},
+  {id:'other',name:'Other',hint:'Rename this row for a project-specific criterion — trade availability, insurance and warranty, column-free spans, moisture risk during construction',on:false,w:3,
+   r:{lwf:3,rc:3,mt:3,h1:3,h2:3},
+   notes:{lwf:'',rc:'',mt:'',h1:'',h2:''}}
+];
+
+const DEFAULT_COST={lwf:1,rc:3,mt:4,h1:4,h2:4};
+const DEFAULT_COST_NOTES={
+  lwf:'Cheapest: abundant BC trades and materials. Baseline for the comparison.',
+  rc:'Typically 10–20 % above wood frame for a 6-storey residential building; Metro Vancouver has an efficient concrete industry.',
+  mt:'Usually 5–15 % above concrete on mid-rise, falling as local supply and detailing mature. Schedule savings claw part of it back.',
+  h1:'Same band as mass timber: no beams, but thicker two-way CLT panels, steel columns with fire protection and proprietary bearing connectors for punching shear.',
+  h2:'Steel-stud bearing walls cost more than wood framing in BC\'s market; the CLT floors are the premium item.'
+};
+const KEY='ssm-state-v2';
+
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function defaultState(){
+  return {storeys:6,occ:'C',fireAuto:true,includeCost:false,costW:3,cost:clone(DEFAULT_COST),costNotes:clone(DEFAULT_COST_NOTES),showNotes:false,criteria:clone(DEFAULT_CRITERIA)};
+}
+function sanitize(s){
+  const d=defaultState();
+  if(!s||typeof s!=='object')return d;
+  const out=Object.assign(d,s);
+  out.storeys=Math.min(30,Math.max(2,parseInt(out.storeys,10)||6));
+  out.occ=out.occ==='D'?'D':'C';
+  out.costW=Math.min(5,Math.max(1,parseInt(out.costW,10)||3));
+  out.cost=Object.assign(clone(DEFAULT_COST),out.cost||{});
+  out.costNotes=Object.assign(clone(DEFAULT_COST_NOTES),out.costNotes||{});
+  if(!Array.isArray(out.criteria)||!out.criteria.length)out.criteria=clone(DEFAULT_CRITERIA);
+  out.criteria=out.criteria.map((c,i)=>({
+    id:String(c.id||('c'+i)),name:String(c.name||'Criterion'),hint:String(c.hint||''),
+    on:c.on!==false,w:Math.min(5,Math.max(1,parseInt(c.w,10)||3)),custom:!!c.custom,
+    r:Object.fromEntries(SYS_IDS.map(id=>[id,Math.min(5,Math.max(1,parseInt((c.r||{})[id],10)||3))])),
+    notes:Object.fromEntries(SYS_IDS.map(id=>[id,String((c.notes||{})[id]||'')]))
+  }));
+  return out;
+}
+
+/* ------------------------------ code logic ------------------------------ */
+function codeStatus(sys,storeys,occ){
+  if(sys.kind==='nc'){
+    return {ok:true,tier:'nc',chips:[['ok','Non-combustible · no storey cap'],storeys>6?['','High-building provisions (3.2.6) likely — top floor above 18 m']:null]};
+  }
+  if(sys.kind==='comb'){
+    return storeys<=6
+      ? {ok:true,tier:'comb',chips:[['ok','Combustible · ≤ 6 storeys incl. podium, 18 m to top floor'],['','Art. 3.2.2.50 / .58 · sprinklered']]}
+      : {ok:false,tier:'comb',chips:[['bad','Not permitted above 6 storeys'],['','Wood frame stops at 6 storeys / 18 m']]};
+  }
+  const zero=occ==='D'?9:8, zeroM=occ==='D'?38:34;
+  const hb=storeys>6?['','High-building provisions (3.2.6) likely']:null;
+  if(storeys<=zero)return {ok:true,tier:0,chips:[['tier','EMTC · 0-min tier'],['','Timber may stay exposed · ≤ '+zero+' storeys / '+zeroM+' m'],hb]};
+  if(storeys<=12)return {ok:true,tier:50,chips:[['tier','EMTC · 50-min tier'],['','2 × 12.7 mm Type X · ≤ 35 % walls, 10–25 % ceilings exposed'],hb]};
+  if(storeys<=18)return {ok:true,tier:70,chips:[['tier','EMTC · 70-min tier'],['','2 × 15.9 mm Type X · non-combustible cladding'],hb]};
+  return {ok:false,tier:70,chips:[['bad','Not permitted above 18 storeys'],['','EMTC stops at 18 storeys / 76 m']]};
+}
+function suggestedFire(sys,st){
+  if(!st.ok)return null;
+  if(sys.id==='rc')return 5;
+  if(sys.id==='lwf')return 2;
+  const t=st.tier;
+  if(sys.id==='mt')return t===0?4:t===50?3:2;
+  if(sys.id==='h1')return t===0?3:t===50?2:1;
+  return t===0?4:t===50?3:2; /* h2 */
+}
+function applyFireSuggestions(){
+  const c=state.criteria.find(x=>x.id==='fire');
+  if(!c)return;
+  SYSTEMS.forEach(s=>{const v=suggestedFire(s,codeStatus(s,state.storeys,state.occ));if(v)c.r[s.id]=v;});
+}
+
+/* ------------------------------ state ------------------------------ */
+let state=load();
+function load(){
+  let fromHash=null;
+  try{
+    const m=location.hash.match(/^#s=(.+)$/);
+    if(m){fromHash=JSON.parse(b64dec(m[1]));history.replaceState(null,'',location.pathname+location.search);}
+  }catch(e){fromHash=null;}
+  if(fromHash)return sanitize(fromHash);
+  try{const raw=localStorage.getItem(KEY);if(raw)return sanitize(JSON.parse(raw));}catch(e){}
+  return defaultState();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function b64enc(str){return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function b64dec(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)));}
+
+/* ------------------------------ scoring ------------------------------ */
+function compute(){
+  const status={};SYSTEMS.forEach(s=>status[s.id]=codeStatus(s,state.storeys,state.occ));
+  const active=state.criteria.filter(c=>c.on);
+  const wsum=active.reduce((a,c)=>a+c.w,0)+(state.includeCost?state.costW:0);
+  const score={},wins={};
+  SYSTEMS.forEach(s=>{
+    wins[s.id]=0;
+    if(!status[s.id].ok||wsum===0){score[s.id]=null;return;}
+    let t=active.reduce((a,c)=>a+c.w*c.r[s.id],0);
+    if(state.includeCost)t+=state.costW*(6-state.cost[s.id]);
+    score[s.id]=t/wsum;
+  });
+  const permitted=SYSTEMS.filter(s=>status[s.id].ok).map(s=>s.id);
+  const leaders={};const nPermitted=permitted.length;
+  active.forEach(c=>{
+    const mx=Math.max(...permitted.map(id=>c.r[id]));
+    leaders[c.id]=permitted.filter(id=>c.r[id]===mx);
+    leaders[c.id].forEach(id=>wins[id]++);
+  });
+  if(state.includeCost){
+    const mn=Math.min(...permitted.map(id=>state.cost[id]));
+    leaders.cost=permitted.filter(id=>state.cost[id]===mn);
+    leaders.cost.forEach(id=>wins[id]++);
+  }
+  const order=SYSTEMS.map(s=>s.id).filter(id=>score[id]!==null).sort((a,b)=>score[b]-score[a]);
+  const rank={};let r=0,prev=null;
+  order.forEach((id,i)=>{if(prev===null||Math.abs(score[id]-prev)>1e-9){r=i+1;}rank[id]=r;prev=score[id];});
+  return {status,score,rank,wins,leaders,active,wsum,nPermitted};
+}
+
+/* ------------------------------ DOM helpers ------------------------------ */
+const $=(sel,el)=>(el||document).querySelector(sel);
+const $$=(sel,el)=>Array.from((el||document).querySelectorAll(sel));
+function el(tag,attrs,children){
+  const n=document.createElement(tag);
+  if(attrs)for(const k in attrs){
+    if(k==='class')n.className=attrs[k];
+    else if(k==='text')n.textContent=attrs[k];
+    else if(k==='html')n.innerHTML=attrs[k];
+    else if(k.startsWith('on'))n.addEventListener(k.slice(2),attrs[k]);
+    else n.setAttribute(k,attrs[k]);
+  }
+  (children||[]).forEach(c=>{if(c!=null)n.appendChild(typeof c==='string'?document.createTextNode(c):c);});
+  return n;
+}
+function dollars(n){
+  const s=el('span',{class:'dollars','aria-label':'Cost rating '+n+' of 5'});
+  for(let i=1;i<=5;i++)s.appendChild(el('span',{class:i<=n?'on':'off',text:'$'}));
+  return s;
+}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1800);}
+
+/* ------------------------------ build matrix (once per structure change) ------------------------------ */
+function buildHeader(){
+  const tr=$('#matrix thead tr');
+  $$('th.c-sys',tr).forEach(n=>n.remove());
+  SYSTEMS.forEach(s=>{
+    tr.appendChild(el('th',{class:'c-sys','data-sys':s.id},[
+      el('div',{class:'sys-name',text:s.name}),
+      el('div',{class:'sys-sub',text:s.sub}),
+      el('div',{class:'sys-code',id:'code-'+s.id})
+    ]));
+  });
+}
+function meter(get,set,label){
+  const m=el('div',{class:'meter',role:'radiogroup','aria-label':label});
+  for(let i=1;i<=5;i++){
+    const b=el('button',{type:'button',role:'radio','aria-label':label+': '+i+' of 5','data-v':i,onclick:()=>set(i),
+      onmouseenter:()=>{m.dataset.hov=i;$$('button',m).forEach(x=>x.classList.toggle('hov',+x.dataset.v<=i));},
+      onmouseleave:()=>{delete m.dataset.hov;$$('button',m).forEach(x=>x.classList.remove('hov'));}});
+    m.appendChild(b);
+  }
+  m.update=()=>{const v=get();$$('button',m).forEach(x=>{x.classList.toggle('on',+x.dataset.v<=v);x.setAttribute('aria-checked',+x.dataset.v===v?'true':'false');});};
+  m.update();
+  return m;
+}
+function buildRows(){
+  const tb=$('#rows');tb.innerHTML='';
+  state.criteria.forEach(c=>{
+    const tr=el('tr',{class:'crit-row','data-id':c.id});
+    const sw=el('label',{class:'switch',title:'Include this criterion in the score'},[
+      el('input',{type:'checkbox',id:'on-'+c.id,'aria-label':'Include '+c.name,onchange:e=>{c.on=e.target.checked;refresh();}}),
+      el('span',{class:'trk'})
+    ]);
+    $('input',sw).checked=c.on;
+    const nameIn=el('input',{class:'crit-name',id:'name-'+c.id,value:c.name,'aria-label':'Criterion name',oninput:e=>{c.name=e.target.value;refreshLight();}});
+    const hint=el('textarea',{class:'crit-hint',id:'hint-'+c.id,rows:'1','aria-label':'What this criterion measures',placeholder:'What does this criterion measure?',oninput:e=>{c.hint=e.target.value;autosizeHint(e.target);save();}});
+    hint.value=c.hint||'';
+    const wEl=el('div',{class:'weight',title:'Weight (importance) 1–5'},[
+      el('button',{type:'button','aria-label':'Lower weight',onclick:()=>{c.w=Math.max(1,c.w-1);refresh();}},['−']),
+      el('span',{class:'w'}),
+      el('button',{type:'button','aria-label':'Raise weight',onclick:()=>{c.w=Math.min(5,c.w+1);refresh();}},['+'])
+    ]);
+    const info=el('button',{type:'button',class:'icon-btn',id:'info-'+c.id,'aria-expanded':'false',title:'Show the rationale behind each rating',text:'i'});
+    const tools=el('div',{class:'crit-tools'},[wEl,info]);
+    if(c.custom)tools.appendChild(el('button',{type:'button',class:'icon-btn danger',title:'Remove this criterion',text:'×',onclick:()=>{state.criteria=state.criteria.filter(x=>x!==c);buildRows();refresh();}}));
+    if(c.id==='fire')tools.appendChild(el('span',{class:'chip tier',id:'fireAutoChip',title:'These ratings follow the BC code tier for the storey count above. Click a rating to take over manually.',text:'from code tier'}));
+    const main=el('div',{},[nameIn,hint,tools]);
+    tr.appendChild(el('th',{class:'c-crit',scope:'row'},[el('div',{class:'crit-inner'},[sw,main,el('span')])]));
+    SYSTEMS.forEach(s=>{
+      const td=el('td',{class:'cell','data-sys':s.id});
+      const val=el('span',{class:'val'});
+      const m=meter(()=>c.r[s.id],v=>{c.r[s.id]=v;if(c.id==='fire')state.fireAuto=false;refresh();},c.name+' — '+s.name);
+      td.appendChild(el('div',{class:'cell-inner'},[m,val,el('span',{class:'lead-dot'})]));
+      td._meter=m;td._val=val;
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+    /* rationale row — one cell per system so the notes sit under their column */
+    const nr=el('tr',{class:'notes-row','data-for':c.id});nr.hidden=!state.showNotes;
+    nr.appendChild(el('th',{class:'c-crit',scope:'row'},[el('div',{class:'lbl',text:'Why these ratings'})]));
+    SYSTEMS.forEach(s=>{
+      const ta=el('textarea',{id:'note-'+c.id+'-'+s.id,'aria-label':'Rationale for '+s.name,placeholder:s.name+' — add a note',oninput:e=>{c.notes[s.id]=e.target.value;autosize(e.target);save();}});
+      ta.value=c.notes[s.id]||'';
+      nr.appendChild(el('td',{},[ta]));
+    });
+    tb.appendChild(nr);
+    info.addEventListener('click',()=>{nr.hidden=!nr.hidden;info.setAttribute('aria-expanded',String(!nr.hidden));if(!nr.hidden)$$('textarea',nr).forEach(autosize);});
+  });
+  $$('textarea.crit-hint',tb).forEach(autosizeHint);
+  if(state.showNotes)$$('tr.notes-row textarea',tb).forEach(autosize);
+}
+function autosize(t){t.style.height='auto';t.style.height=Math.max(74,t.scrollHeight+2)+'px';}
+function autosizeHint(t){t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px';}
+function buildFoot(){
+  const cr=$('#costRow');cr.innerHTML='';
+  const sw=el('label',{class:'switch',title:'Include cost in the score (cheaper scores higher)'},[
+    el('input',{type:'checkbox',id:'on-cost','aria-label':'Include cost in the score',onchange:e=>{state.includeCost=e.target.checked;refresh();}}),
+    el('span',{class:'trk'})
+  ]);
+  $('input',sw).checked=state.includeCost;
+  const wEl=el('div',{class:'weight',title:'Weight of cost when included'},[
+    el('button',{type:'button','aria-label':'Lower cost weight',onclick:()=>{state.costW=Math.max(1,state.costW-1);refresh();}},['−']),
+    el('span',{class:'w',id:'costW'}),
+    el('button',{type:'button','aria-label':'Raise cost weight',onclick:()=>{state.costW=Math.min(5,state.costW+1);refresh();}},['+'])
+  ]);
+  const info=el('button',{type:'button',class:'icon-btn',id:'info-cost','aria-expanded':'false',title:'Show cost notes',text:'i'});
+  cr.appendChild(el('th',{class:'c-crit',scope:'row'},[el('div',{class:'crit-inner'},[sw,
+    el('div',{},[el('div',{class:'crit-name',style:'padding:2px 0',text:'Cost ($)'}),el('div',{class:'crit-hint',text:'Relative construction cost, $ (lowest) to $$$$$ (highest). Switch on to score it — cheaper counts higher.'}),el('div',{class:'crit-tools'},[wEl,info])]),el('span')])]));
+  SYSTEMS.forEach(s=>{
+    const td=el('td',{'data-sys':s.id});
+    const sel=el('div',{class:'cost-sel',role:'radiogroup','aria-label':'Cost rating — '+s.name});
+    for(let i=1;i<=5;i++){
+      sel.appendChild(el('button',{type:'button',role:'radio','data-v':i,'aria-label':'Cost '+i+' of 5',text:'$',onclick:()=>{state.cost[s.id]=i;refresh();},
+        onmouseenter:()=>$$('button',sel).forEach(x=>x.classList.toggle('hov',+x.dataset.v<=i)),
+        onmouseleave:()=>$$('button',sel).forEach(x=>x.classList.remove('hov'))}));
+    }
+    sel.update=()=>{const v=state.cost[s.id];$$('button',sel).forEach(x=>{x.classList.toggle('on',+x.dataset.v<=v);x.setAttribute('aria-checked',+x.dataset.v===v?'true':'false');});};
+    td._sel=sel;
+    td.appendChild(el('div',{class:'cell-inner'},[sel,el('span',{class:'lead-dot'})]));
+    cr.appendChild(td);
+  });
+  /* cost notes row */
+  let nr=$('#costNotes');if(nr)nr.remove();
+  nr=el('tr',{class:'notes-row',id:'costNotes'});nr.hidden=!state.showNotes;
+  nr.appendChild(el('th',{class:'c-crit',scope:'row'},[el('div',{class:'lbl',text:'Cost basis'})]));
+  SYSTEMS.forEach(s=>{
+    const ta=el('textarea',{id:'note-cost-'+s.id,'aria-label':'Cost note for '+s.name,placeholder:s.name+' — add a note',oninput:e=>{state.costNotes[s.id]=e.target.value;autosize(e.target);save();}});
+    ta.value=state.costNotes[s.id]||'';
+    nr.appendChild(el('td',{},[ta]));
+  });
+  cr.parentNode.insertBefore(nr,$('#scoreRow'));
+  info.addEventListener('click',()=>{nr.hidden=!nr.hidden;info.setAttribute('aria-expanded',String(!nr.hidden));if(!nr.hidden)$$('textarea',nr).forEach(autosize);});
+
+  const sr=$('#scoreRow');sr.innerHTML='';
+  sr.appendChild(el('th',{class:'c-crit',scope:'row'},[el('div',{class:'crit-name',style:'padding:2px 0',text:'Weighted score'}),el('div',{class:'crit-hint',id:'scoreHint'})]));
+  SYSTEMS.forEach(s=>sr.appendChild(el('td',{'data-sys':s.id,id:'score-'+s.id})));
+}
+
+/* ------------------------------ refresh (derived UI) ------------------------------ */
+function refreshLight(){ /* names only */
+  renderRanking(compute());save();
+}
+function refresh(){
+  if(state.fireAuto)applyFireSuggestions();
+  const R=compute();
+  /* scenario controls */
+  $('#storeys').value=state.storeys;$('#occ').value=state.occ;
+  $$('#fireMode button').forEach(b=>b.classList.toggle('on',(b.dataset.mode==='auto')===state.fireAuto));
+  /* headers */
+  SYSTEMS.forEach(s=>{
+    const box=$('#code-'+s.id);box.innerHTML='';
+    R.status[s.id].chips.filter(Boolean).forEach(([cls,txt])=>box.appendChild(el('span',{class:'chip '+cls,text:txt})));
+  });
+  /* rows */
+  const fac=$('#fireAutoChip');if(fac)fac.hidden=!state.fireAuto;
+  $$('tr.crit-row').forEach(tr=>{
+    const c=state.criteria.find(x=>x.id===tr.dataset.id);if(!c)return;
+    tr.classList.toggle('off',!c.on);
+    $('input[type=checkbox]',tr).checked=c.on;
+    $('.weight .w',tr).innerHTML='weight <b>'+c.w+'</b>';
+    SYSTEMS.forEach(s=>{
+      const td=$('td[data-sys="'+s.id+'"]',tr);
+      const ok=R.status[s.id].ok;
+      td.classList.toggle('na',!ok);
+      td.dataset.lvl=ok&&c.on?c.r[s.id]:0;
+      td._meter.update();td._val.textContent=c.r[s.id];
+      $$('button',td._meter).forEach(b=>b.disabled=!ok);
+      td.classList.toggle('lead',ok&&c.on&&(R.leaders[c.id]||[]).includes(s.id)&&(R.leaders[c.id]||[]).length<R.nPermitted);
+    });
+  });
+  /* cost + score */
+  $('#on-cost').checked=state.includeCost;
+  $('#costW').innerHTML='weight <b>'+state.costW+'</b>';
+  $('#costRow').classList.toggle('off',!state.includeCost);
+  SYSTEMS.forEach(s=>{
+    const td=$('#costRow td[data-sys="'+s.id+'"]');td._sel.update();
+    td.classList.toggle('lead',state.includeCost&&(R.leaders.cost||[]).includes(s.id)&&(R.leaders.cost||[]).length<R.nPermitted);
+    const sc=$('#score-'+s.id);sc.innerHTML='';
+    const v=R.score[s.id];
+    if(v===null){
+      sc.appendChild(el('div',{class:'score'},[el('b',{text:'—'})]));
+      sc.appendChild(el('div',{class:'score-sub',text:R.status[s.id].ok?'Switch on at least one criterion':'Not permitted at '+state.storeys+' storeys'}));
+    }else{
+      const rk=R.rank[s.id];
+      sc.appendChild(el('div',{class:'score'},[el('b',{text:v.toFixed(2)}),el('span',{class:'den',text:'/ 5'}),el('span',{class:'rk'+(rk===1?' top':''),text:'#'+rk})]));
+      sc.appendChild(el('div',{class:'score-sub',text:Math.round(v/5*100)+' % · leads '+R.wins[s.id]+' of '+(R.active.length+(state.includeCost?1:0))}));
+    }
+  });
+  $('#scoreHint').textContent=R.active.length+(state.includeCost?1:0)+' criteria on · Σ(weight × rating) ÷ Σ weight';
+  $('#btnNotes').textContent=state.showNotes?'Hide rationale':'Show rationale';
+  renderRanking(R);
+  save();
+}
+function renderRanking(R){
+  const ol=$('#ranks');ol.innerHTML='';
+  const ids=SYSTEMS.map(s=>s.id).slice().sort((a,b)=>{
+    const sa=R.score[a],sb=R.score[b];
+    if(sa===null&&sb===null)return 0;if(sa===null)return 1;if(sb===null)return -1;return sb-sa;
+  });
+  const top=Math.max(0,...ids.map(id=>R.score[id]||0));
+  ids.forEach(id=>{
+    const s=SYSTEMS.find(x=>x.id===id);const v=R.score[id];
+    const li=el('li',{class:'rank-row'+(v===null?' out':'')});
+    li.appendChild(el('span',{class:'badge',text:v===null?'–':String(R.rank[id])}));
+    const sub=el('div',{class:'s'},[dollars(state.cost[id])]);
+    if(v!==null)sub.appendChild(el('span',{text:'leads '+R.wins[id]+(R.wins[id]===1?' criterion':' criteria')}));
+    else sub.appendChild(el('span',{class:'chip bad',text:'Not permitted at '+state.storeys+' storeys'}));
+    li.appendChild(el('div',{class:'rank-name'},[el('span',{class:'n',text:s.name}),sub]));
+    const track=el('div',{class:'track'},[el('div',{class:'fill',style:'width:'+(v===null?0:(v/5*100))+'%'})]);
+    li.appendChild(track);
+    li.appendChild(el('div',{class:'rank-score',html:v===null?'<small>n/a</small>':v.toFixed(2)+' <small>/ 5</small>'}));
+    ol.appendChild(li);
+  });
+  const nOn=R.active.length;
+  const eq=R.active.every(c=>c.w===R.active[0].w)&&(!state.includeCost||!R.active.length||state.costW===R.active[0].w);
+  $('#rankMeta').textContent=nOn+' of '+state.criteria.length+' criteria on · '+(eq?'equal weights':'custom weights')+' · cost '+(state.includeCost?'included':'excluded')+' · '+state.storeys+' storeys, '+(state.occ==='D'?'office':'residential');
+  const first=ids.find(id=>R.score[id]!==null),second=ids.filter(id=>R.score[id]!==null)[1];
+  let note='';
+  if(first&&second){
+    const gap=R.score[first]-R.score[second];
+    note=SYSTEMS.find(x=>x.id===first).name+' leads '+SYSTEMS.find(x=>x.id===second).name+' by '+gap.toFixed(2)+(gap<0.25?' — close enough that a single weight change can flip it.':' on the current weights.');
+  }
+  $('#rankNote').textContent=note;
+}
+
+/* ------------------------------ actions ------------------------------ */
+function setStoreys(n){state.storeys=Math.min(30,Math.max(2,n));refresh();}
+$('#stDown').addEventListener('click',()=>setStoreys(state.storeys-1));
+$('#stUp').addEventListener('click',()=>setStoreys(state.storeys+1));
+$('#storeys').addEventListener('change',e=>setStoreys(parseInt(e.target.value,10)||6));
+$('#occ').addEventListener('change',e=>{state.occ=e.target.value;refresh();});
+$$('#fireMode button').forEach(b=>b.addEventListener('click',()=>{state.fireAuto=b.dataset.mode==='auto';refresh();}));
+$('#btnNotes').addEventListener('click',()=>{
+  state.showNotes=!state.showNotes;
+  $$('tr.notes-row').forEach(r=>{r.hidden=!state.showNotes;if(state.showNotes)$$('textarea',r).forEach(autosize);});
+  $$('.icon-btn[id^=info-]').forEach(b=>b.setAttribute('aria-expanded',String(state.showNotes)));
+  refresh();
+});
+$('#btnAdd').addEventListener('click',()=>{
+  const id='c'+Date.now().toString(36);
+  state.criteria.push({id,name:'New criterion',hint:'',on:true,w:3,custom:true,r:Object.fromEntries(SYS_IDS.map(x=>[x,3])),notes:Object.fromEntries(SYS_IDS.map(x=>[x,'']))});
+  buildRows();refresh();
+  const inp=$('#name-'+id);if(inp){inp.focus();inp.select();}
+});
+$('#btnReset').addEventListener('click',()=>{
+  if(!confirm('Reset every rating, weight, note and toggle to the Sense defaults?'))return;
+  state=defaultState();buildRows();buildFoot();refresh();toast('Defaults restored');
+});
+$('#btnPrint').addEventListener('click',()=>window.print());
+$('#btnLink').addEventListener('click',()=>{
+  const url=location.origin+location.pathname+location.search+'#s='+b64enc(JSON.stringify(state));
+  copyText(url,'Share link copied — it reopens the matrix exactly as it is now');
+});
+$('#btnCopy').addEventListener('click',()=>copyText(tsv(),'Table copied — paste into Excel'));
+function tsv(){
+  const R=compute();
+  const rows=[['Criterion','Included','Weight',...SYSTEMS.map(s=>s.name)]];
+  state.criteria.forEach(c=>rows.push([c.name,c.on?'yes':'no',c.w,...SYSTEMS.map(s=>c.r[s.id])]));
+  rows.push(['Cost ($, 1 = cheapest)',state.includeCost?'yes':'no',state.costW,...SYSTEMS.map(s=>state.cost[s.id])]);
+  rows.push(['Weighted score (/5)','','',...SYSTEMS.map(s=>R.score[s.id]===null?'n/a':R.score[s.id].toFixed(2))]);
+  rows.push(['Rank','','',...SYSTEMS.map(s=>R.score[s.id]===null?'not permitted':R.rank[s.id])]);
+  rows.push(['Scenario',state.storeys+' storeys above grade, Group '+state.occ+', RC podium + 1 parking level']);
+  return rows.map(r=>r.join('\t')).join('\n');
+}
+function copyText(text,msg){
+  const done=()=>toast(msg);
+  const fail=()=>{
+    const box=el('div',{class:'fallback'},[el('div',{class:'box'},[
+      el('div',{text:'Copy this manually (clipboard access is blocked here):'}),
+      el('textarea',{readonly:'readonly'}),
+      el('button',{type:'button',class:'btn primary',text:'Close',onclick:()=>box.remove()})
+    ])]);
+    $('textarea',box).value=text;document.body.appendChild(box);$('textarea',box).select();
+  };
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,()=>legacy());}
+    else legacy();
+  }catch(e){legacy();}
+  function legacy(){
+    try{const ta=el('textarea',{style:'position:fixed;opacity:0'});ta.value=text;document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();ok?done():fail();}
+    catch(e){fail();}
+  }
+}
+
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{$$('textarea.crit-hint').forEach(autosizeHint);$$('tr.notes-row:not([hidden]) textarea').forEach(autosize);},120);});
+
+/* ------------------------------ logo ------------------------------
+   The Sense logo PNGs (320x95, light = black text, dark = white text) are
+   embedded as bytes and painted onto canvases: the Artifact viewer's content
+   policy blocks data: URIs and relative image files, but decoding bytes in
+   memory needs no URL at all. Falls back to an <img> and finally to a text
+   wordmark, so the header never shows a broken image. */
+const LOGO_PNG={light:'{{LOGO_LIGHT_B64}}',dark:'{{LOGO_DARK_B64}}'};
+function pngBytes(b64){const bin=atob(b64);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
+async function paintLogo(canvas,b64){
+  const blob=new Blob([pngBytes(b64)],{type:'image/png'});
+  try{
+    const bmp=await createImageBitmap(blob);
+    canvas.width=bmp.width;canvas.height=bmp.height;
+    canvas.getContext('2d').drawImage(bmp,0,0);
+    return true;
+  }catch(e){}
+  return new Promise(res=>{ /* older engines: decode through an <img> instead */
+    const img=new Image();
+    img.onload=()=>{try{canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;canvas.getContext('2d').drawImage(img,0,0);res(true);}catch(e){res(false);}};
+    img.onerror=()=>res(false);
+    img.src='data:image/png;base64,'+b64;
+  });
+}
+async function paintLogos(){
+  const ok=await Promise.all([paintLogo($('#brand .logo.on-light'),LOGO_PNG.light),paintLogo($('#brand .logo.on-dark'),LOGO_PNG.dark)]);
+  if(!ok.every(Boolean))$('#brand').classList.add('no-logo');
+}
+
+/* ------------------------------ boot ------------------------------ */
+buildHeader();buildRows();buildFoot();refresh();paintLogos();
+})();
+</script>
