@@ -18,6 +18,15 @@ page = (ROOT / "src" / "template.html").read_text(encoding="utf-8")
 assert page.count("{{LOGO_LIGHT_B64}}") == 1 and page.count("{{LOGO_DARK_B64}}") == 1
 page = page.replace("{{LOGO_LIGHT_B64}}", b64("logo_light.png")).replace("{{LOGO_DARK_B64}}", b64("logo_dark.png"))
 
+# Sense brand type: Helvetica Neue subset to Latin as WOFF2 (brand/fonts), inlined as data: URIs
+FONTS = {"{{FONT_MD_B64}}": "fonts/sense-md.woff2",    # 65 Medium — UI and body
+         "{{FONT_BD_B64}}": "fonts/sense-bd.woff2",    # 75 Bold — emphasis
+         "{{FONT_UL_B64}}": "fonts/sense-ul.woff2",    # 25 UltraLight — display numerals, lede
+         "{{FONT_ULI_B64}}": "fonts/sense-uli.woff2"}  # 25 UltraLight Italic — taglines (wordmark echo)
+for key, rel in FONTS.items():
+    assert page.count(key) == 1, key
+    page = page.replace(key, b64(rel))
+
 (ROOT / "dist").mkdir(exist_ok=True)
 (ROOT / "dist" / "artifact.html").write_text(page, encoding="utf-8")
 
