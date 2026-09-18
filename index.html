@@ -88,7 +88,7 @@ a{color:var(--brand);text-decoration-thickness:1px;text-underline-offset:2px}
 .brand.no-logo .wordmark{display:inline}
 .brand-rule{width:1px;height:30px;background:var(--line);flex:none}
 .topbar h1{font-size:16px;font-weight:500;letter-spacing:-0.01em;line-height:1.25}
-.tag{margin:2px 0 0;font-size:15px;line-height:1.3;font-weight:200;font-style:italic;color:var(--text);letter-spacing:.005em}
+.tag{margin:3px 0 0;font-size:13px;line-height:1.35;font-weight:500;color:var(--text-2)}
 .topbar-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 
 .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--line);border-radius:var(--radius-s);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;line-height:1.2;transition:background .15s,border-color .15s}
@@ -164,12 +164,12 @@ select.sel{height:34px;padding:0 30px 0 12px;border:1px solid var(--line);border
 
 /* ------------------------------ matrix ------------------------------ */
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.matrix{border-collapse:separate;border-spacing:0;width:100%;min-width:1000px}
+table.matrix{border-collapse:separate;border-spacing:0;width:100%;min-width:1060px}
 .matrix th,.matrix td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line-soft)}
 .matrix thead th{padding:16px 14px 14px;background:var(--surface-2);font-weight:500;font-size:13.5px;border-bottom:1px solid var(--line)}
 .matrix thead th.c-crit{border-radius:var(--radius) 0 0 0}
 .matrix thead th:last-child{border-radius:0 var(--radius) 0 0}
-.matrix .c-crit{position:sticky;left:0;z-index:2;width:280px;min-width:280px;background:var(--surface);box-shadow:1px 0 0 var(--line-soft)}
+.matrix .c-crit{position:sticky;left:0;z-index:2;width:320px;min-width:320px;background:var(--surface);box-shadow:1px 0 0 var(--line-soft)}
 .matrix thead .c-crit{background:var(--surface-2)}
 .matrix .c-sys{width:156px;min-width:156px}
 .sys-name{font-size:14.5px;font-weight:500;letter-spacing:-0.005em;line-height:1.25}
@@ -190,7 +190,9 @@ textarea.crit-hint{display:block;width:calc(100% + 6px);margin-left:-6px;padding
 textarea.crit-hint:hover{border-color:var(--line)}
 textarea.crit-hint:focus{border-color:var(--accent-line);background:var(--surface);color:var(--text-2)}
 #fireAutoChip{margin-left:2px}
-.crit-tools{display:flex;align-items:center;gap:6px;margin-top:8px}
+.crit-tools{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;row-gap:8px}
+.seg.aspects button{height:24px;padding:0 9px;font-size:11.5px;white-space:nowrap}
+.crit-tools #aspectChip{font-size:11px}
 .weight{display:inline-flex;align-items:center;border:1px solid var(--line-soft);border-radius:6px;overflow:hidden;background:var(--surface-2)}
 .weight button{width:24px;height:24px;border:0;background:transparent;color:var(--text-2);font-size:14px;line-height:1}
 .weight button:hover{background:var(--accent-soft);color:var(--brand-deep)}
@@ -219,6 +221,7 @@ td.cell[data-lvl="1"]{--rc:var(--r1)}td.cell[data-lvl="2"]{--rc:var(--r2)}td.cel
 .meter{display:inline-flex;gap:3px}
 .meter button{width:16px;height:16px;padding:0;border:0;border-radius:3px;background:var(--surface-3);transition:background .12s,transform .12s}
 .meter button.on{background:var(--rc,var(--brand))}
+.meter button.half{background:linear-gradient(90deg,var(--rc,var(--brand)) 50%,var(--surface-3) 50%)}
 .meter button:hover{transform:scaleY(1.2)}
 .meter:hover button{background:var(--surface-3)}
 .meter[data-hov="1"] button.hov{background:var(--r1)}.meter[data-hov="2"] button.hov{background:var(--r2)}.meter[data-hov="3"] button.hov{background:var(--r3)}.meter[data-hov="4"] button.hov{background:var(--r4)}.meter[data-hov="5"] button.hov{background:var(--r5)}
@@ -234,6 +237,9 @@ tr.notes-row th.c-crit,tr.notes-row td{padding:0 14px 16px;border-bottom:1px sol
 tr.notes-row th.c-crit{padding-left:54px}
 tr.crit-row:has(+ tr.notes-row:not([hidden])) th,tr.crit-row:has(+ tr.notes-row:not([hidden])) td,tr.cost-row:has(+ tr.notes-row:not([hidden])) th,tr.cost-row:has(+ tr.notes-row:not([hidden])) td{border-bottom:0}
 tr.notes-row .lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);padding-top:8px;font-weight:500}
+tr.notes-row .lbl.sub{padding:8px 0 4px;text-transform:none;letter-spacing:0;font-size:11.5px}
+tr.notes-row .lbl.sub:first-child{padding-top:0}
+tr.notes-row .notes-stack textarea+.lbl.sub{padding-top:10px}
 tr.notes-row textarea{display:block;width:100%;min-height:74px;resize:vertical;border:1px solid var(--line-soft);border-radius:6px;padding:8px 9px;background:var(--surface-2);font-size:12.5px;line-height:1.45;color:var(--text-2)}
 tr.notes-row textarea:focus{border-color:var(--accent-line);background:var(--surface);color:var(--text)}
 .matrix tfoot tr.notes-row th.c-crit,.matrix tfoot tr.notes-row td{background:var(--surface-2);border-top:0}
@@ -300,6 +306,8 @@ tr.score-row td:last-child{border-radius:0 0 var(--radius) 0}
 @media (max-width:560px){
   .brand{gap:12px}.logo{height:26px}.brand-rule{height:26px}
   .topbar h1{font-size:15px}.tag{display:none}
+  .matrix .c-crit{width:250px;min-width:250px}
+  .seg.aspects button{padding:0 7px;font-size:11px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media print{
@@ -540,7 +548,25 @@ const DEFAULT_CRITERIA=[
     h1:'Flat exposed CLT ceilings provide most of the effect; the steel columns are neutral.',
     h2:'Exposed CLT overhead; the clad stud walls dilute the effect compared with full mass timber.'
    }},
-  {id:'other',name:'Other',hint:'Rename this row for a project-specific criterion — trade availability, insurance and warranty, column-free spans, moisture risk during construction',on:false,w:3,
+  {id:'space',name:'Clear storey height & column-free space',hint:'Structural depth eating into floor-to-floor height, and how far the floor can span before a wall or column interrupts the plan. Toggle either aspect or rate both together.',on:true,w:3,
+   aspects:{height:true,span:true},
+   ar:{height:{lwf:3,rc:5,mt:2,h1:4,h2:4},span:{lwf:1,rc:4,mt:4,h1:2,h2:2}},
+   an:{
+    height:{
+     lwf:'I-joist or open-web floors run 300–400 mm plus a ceiling; bearing walls carry the load so there are no beams, but the floor zone is deep for the span it achieves.',
+     rc:'200–250 mm flat plate with no beams: the thinnest floor here, so the most clear height for a given floor-to-floor or an extra storey under a height limit.',
+     mt:'Glulam beams hang 400–600 mm below the CLT panels, plus topping and services under the beams — the deepest floor zone unless services thread between beams.',
+     h1:'Point-supported CLT flat plate: no beams, but the two-way panel is thicker (about 200–260 mm) plus a topping, so a little deeper than a concrete flat plate.',
+     h2:'CLT spanning wall to wall (about 175–245 mm) with no beams; the floor zone is close to a flat plate with the topping added.'
+    },
+    span:{
+     lwf:'Bearing walls every 4–6 m with no long-span option — the plan is fixed by structure and cannot open up later.',
+     rc:'Flat plate on a 7.5–8.5 m column grid, which lines up with the parking bays below; walls are only where the layout wants them.',
+     mt:'Glulam beams span 6–9 m between columns and CLT panels 4–6 m between beams: open bays and a plan that can change, at the cost of beam depth.',
+     h1:'Point-supported CLT needs a tight column grid (about 3–4.5 m) to control punching shear, so columns land in the plan far more often than in concrete or post-and-beam.',
+     h2:'Steel-stud bearing walls at CLT span spacing (4–6 m) — similar to wood frame in plan flexibility, with a slightly longer floor span.'
+    }
+   },
    r:{lwf:3,rc:3,mt:3,h1:3,h2:3},
    notes:{lwf:'',rc:'',mt:'',h1:'',h2:''}}
 ];
@@ -556,6 +582,12 @@ const DEFAULT_COST_NOTES={
 const KEY='ssm-state-v3';
 
 function clone(o){return JSON.parse(JSON.stringify(o));}
+function aspectsOn(c){return c.aspects?['height','span'].filter(k=>c.aspects[k]):[];}
+function rating(c,id){
+  if(!c.aspects)return c.r[id];
+  const ks=aspectsOn(c);return ks.reduce((a,k)=>a+c.ar[k][id],0)/ks.length;
+}
+function fmtRating(v){return Number.isInteger(v)?String(v):v.toFixed(1);}
 function defaultState(){
   return {storeys:6,occ:'C',fireAuto:true,includeCost:false,costW:3,cost:clone(DEFAULT_COST),costNotes:clone(DEFAULT_COST_NOTES),showNotes:false,criteria:clone(DEFAULT_CRITERIA)};
 }
@@ -569,7 +601,17 @@ function sanitize(s){
   out.cost=Object.assign(clone(DEFAULT_COST),out.cost||{});
   out.costNotes=Object.assign(clone(DEFAULT_COST_NOTES),out.costNotes||{});
   if(!Array.isArray(out.criteria)||!out.criteria.length)out.criteria=clone(DEFAULT_CRITERIA);
-  out.criteria=out.criteria.map((c,i)=>({
+  /* saved states from before the two-aspect criterion: swap the placeholder "Other" row for it */
+  if(!out.criteria.some(c=>c&&c.id==='space'))out.criteria=out.criteria.map(c=>(c&&c.id==='other'&&!c.custom)?clone(DEFAULT_CRITERIA.find(d=>d.id==='space')):c);
+  const clampR=r=>Object.fromEntries(SYS_IDS.map(id=>[id,Math.min(5,Math.max(1,parseInt((r||{})[id],10)||3))]));
+  const cleanNotes=n=>Object.fromEntries(SYS_IDS.map(id=>[id,String((n||{})[id]||'')]));
+  out.criteria=out.criteria.map((c,i)=>c.aspects?(()=>{
+    const d=DEFAULT_CRITERIA.find(x=>x.id==='space');
+    const a={height:c.aspects.height!==false,span:c.aspects.span!==false};if(!a.height&&!a.span)a.height=a.span=true;
+    return {id:'space',name:String(c.name||d.name),hint:String(c.hint||d.hint),on:c.on!==false,w:Math.min(5,Math.max(1,parseInt(c.w,10)||3)),custom:false,
+      aspects:a,ar:{height:clampR((c.ar||{}).height||d.ar.height),span:clampR((c.ar||{}).span||d.ar.span)},
+      an:{height:cleanNotes((c.an||{}).height||d.an.height),span:cleanNotes((c.an||{}).span||d.an.span)},r:clampR(c.r),notes:cleanNotes(c.notes)};
+  })():({
     id:String(c.id||('c'+i)),name:String(c.name||'Criterion'),hint:String(c.hint||''),
     on:c.on!==false,w:Math.min(5,Math.max(1,parseInt(c.w,10)||3)),custom:!!c.custom,
     r:Object.fromEntries(SYS_IDS.map(id=>[id,Math.min(5,Math.max(1,parseInt((c.r||{})[id],10)||3))])),
@@ -648,15 +690,15 @@ function compute(){
   SYSTEMS.forEach(s=>{
     wins[s.id]=0;
     if(!status[s.id].ok||wsum===0){score[s.id]=null;return;}
-    let t=active.reduce((a,c)=>a+c.w*c.r[s.id],0);
+    let t=active.reduce((a,c)=>a+c.w*rating(c,s.id),0);
     if(state.includeCost)t+=state.costW*(6-state.cost[s.id]);
     score[s.id]=t/wsum;
   });
   const permitted=SYSTEMS.filter(s=>status[s.id].ok).map(s=>s.id);
   const leaders={};const nPermitted=permitted.length;
   active.forEach(c=>{
-    const mx=Math.max(...permitted.map(id=>c.r[id]));
-    leaders[c.id]=permitted.filter(id=>c.r[id]===mx);
+    const mx=Math.max(...permitted.map(id=>rating(c,id)));
+    leaders[c.id]=permitted.filter(id=>rating(c,id)===mx);
     leaders[c.id].forEach(id=>wins[id]++);
   });
   if(state.includeCost){
@@ -712,7 +754,7 @@ function meter(get,set,label){
       onmouseleave:()=>{delete m.dataset.hov;$$('button',m).forEach(x=>x.classList.remove('hov'));}});
     m.appendChild(b);
   }
-  m.update=()=>{const v=get();$$('button',m).forEach(x=>{x.classList.toggle('on',+x.dataset.v<=v);x.setAttribute('aria-checked',+x.dataset.v===v?'true':'false');});};
+  m.update=()=>{const v=get();$$('button',m).forEach(x=>{const i=+x.dataset.v;x.classList.toggle('on',i<=v);x.classList.toggle('half',i>v&&i<v+1);x.setAttribute('aria-checked',i===Math.round(v)?'true':'false');});};
   m.update();
   return m;
 }
@@ -737,12 +779,24 @@ function buildRows(){
     const tools=el('div',{class:'crit-tools'},[wEl,info]);
     if(c.custom)tools.appendChild(el('button',{type:'button',class:'icon-btn danger',title:'Remove this criterion',text:'×',onclick:()=>{state.criteria=state.criteria.filter(x=>x!==c);buildRows();refresh();}}));
     if(c.id==='fire')tools.appendChild(el('span',{class:'chip tier',id:'fireAutoChip',title:'These ratings follow the BC code tier for the storey count above. Click a rating to take over manually.',text:'from code tier'}));
+    if(c.aspects){
+      const seg=el('div',{class:'seg aspects',role:'group','aria-label':'Which aspects to rate'});
+      [['height','Storey height','Structural depth eating into floor-to-floor height'],['span','Column-free','How far the floor spans before a wall or column interrupts the plan']].forEach(([k,label,tip])=>{
+        seg.appendChild(el('button',{type:'button','data-k':k,title:tip,'aria-pressed':String(!!c.aspects[k]),class:c.aspects[k]?'on':'',text:label,onclick:()=>{
+          if(c.aspects[k]&&aspectsOn(c).length===1){toast('Keep at least one aspect on');return;}
+          const open=!(document.querySelector('tr.notes-row[data-for="'+c.id+'"]')||{hidden:true}).hidden;
+          c.aspects[k]=!c.aspects[k];buildRows();refresh();
+          if(open){const nr=document.querySelector('tr.notes-row[data-for="'+c.id+'"]');nr.hidden=false;$$('textarea',nr).forEach(autosize);const ib=$('#info-'+c.id);ib.setAttribute('aria-expanded','true');}}}));
+      });
+      tools.appendChild(seg);
+      tools.appendChild(el('span',{class:'chip',id:'aspectChip',title:'With both aspects on, the row rating is the mean of the two and a click sets both',text:aspectsOn(c).length>1?'mean of both · click sets both':(c.aspects.height?'storey height only':'column-free only')}));
+    }
     const main=el('div',{},[nameIn,hint,tools]);
     tr.appendChild(el('th',{class:'c-crit',scope:'row'},[el('div',{class:'crit-inner'},[sw,main,el('span')])]));
     SYSTEMS.forEach(s=>{
       const td=el('td',{class:'cell','data-sys':s.id});
       const val=el('span',{class:'val'});
-      const m=meter(()=>c.r[s.id],v=>{c.r[s.id]=v;if(c.id==='fire')state.fireAuto=false;refresh();},c.name+' — '+s.name);
+      const m=meter(()=>rating(c,s.id),v=>{if(c.aspects)aspectsOn(c).forEach(k=>c.ar[k][s.id]=v);else c.r[s.id]=v;if(c.id==='fire')state.fireAuto=false;refresh();},c.name+' — '+s.name);
       td.appendChild(el('div',{class:'cell-inner'},[m,val,el('span',{class:'lead-dot'})]));
       td._meter=m;td._val=val;
       tr.appendChild(td);
@@ -752,6 +806,17 @@ function buildRows(){
     const nr=el('tr',{class:'notes-row','data-for':c.id});nr.hidden=!state.showNotes;
     nr.appendChild(el('th',{class:'c-crit',scope:'row'},[el('div',{class:'lbl',text:'Why these ratings'})]));
     SYSTEMS.forEach(s=>{
+      if(c.aspects){
+        const cell=el('td',{class:'notes-stack'});
+        aspectsOn(c).forEach(k=>{
+          const label=k==='height'?'Storey height':'Column-free space';
+          const ta=el('textarea',{id:'note-'+c.id+'-'+k+'-'+s.id,'aria-label':label+' rationale for '+s.name,placeholder:s.name+' — '+label.toLowerCase(),oninput:e=>{c.an[k][s.id]=e.target.value;autosize(e.target);save();}});
+          ta.value=c.an[k][s.id]||'';
+          if(aspectsOn(c).length>1)cell.appendChild(el('div',{class:'lbl sub',text:label+' · '+c.ar[k][s.id]}));
+          cell.appendChild(ta);
+        });
+        nr.appendChild(cell);return;
+      }
       const ta=el('textarea',{id:'note-'+c.id+'-'+s.id,'aria-label':'Rationale for '+s.name,placeholder:s.name+' — add a note',oninput:e=>{c.notes[s.id]=e.target.value;autosize(e.target);save();}});
       ta.value=c.notes[s.id]||'';
       nr.appendChild(el('td',{},[ta]));
@@ -835,8 +900,9 @@ function refresh(){
       const td=$('td[data-sys="'+s.id+'"]',tr);
       const ok=R.status[s.id].ok;
       td.classList.toggle('na',!ok);
-      td.dataset.lvl=ok&&c.on?c.r[s.id]:0;
-      td._meter.update();td._val.textContent=c.r[s.id];
+      const rv=rating(c,s.id);
+      td.dataset.lvl=ok&&c.on?Math.round(rv):0;
+      td._meter.update();td._val.textContent=fmtRating(rv);
       $$('button',td._meter).forEach(b=>b.disabled=!ok);
       td.classList.toggle('lead',ok&&c.on&&(R.leaders[c.id]||[]).includes(s.id)&&(R.leaders[c.id]||[]).length<R.nPermitted);
     });
@@ -891,7 +957,9 @@ function renderRanking(R){
   let note='';
   if(first&&second){
     const gap=R.score[first]-R.score[second];
-    note=SYSTEMS.find(x=>x.id===first).name+' leads '+SYSTEMS.find(x=>x.id===second).name+' by '+gap.toFixed(2)+(gap<0.25?' — close enough that a single weight change can flip it.':' on the current weights.');
+    note=gap<0.005
+      ?SYSTEMS.find(x=>x.id===first).name+' and '+SYSTEMS.find(x=>x.id===second).name+' are tied on the current weights — a single weight change decides it.'
+      :SYSTEMS.find(x=>x.id===first).name+' leads '+SYSTEMS.find(x=>x.id===second).name+' by '+gap.toFixed(2)+(gap<0.25?' — close enough that a single weight change can flip it.':' on the current weights.');
   }
   $('#rankNote').textContent=note;
 }
@@ -928,7 +996,14 @@ $('#btnCopy').addEventListener('click',()=>copyText(tsv(),'Table copied — past
 function tsv(){
   const R=compute();
   const rows=[['Criterion','Included','Weight',...SYSTEMS.map(s=>s.name)]];
-  state.criteria.forEach(c=>rows.push([c.name,c.on?'yes':'no',c.w,...SYSTEMS.map(s=>c.r[s.id])]));
+  state.criteria.forEach(c=>{
+    if(c.aspects){
+      const on=aspectsOn(c);
+      if(on.includes('height'))rows.push([c.name+' — clear storey height',c.on?'yes':'no',c.w,...SYSTEMS.map(s=>c.ar.height[s.id])]);
+      if(on.includes('span'))rows.push([c.name+' — column-free space',c.on?'yes':'no',c.w,...SYSTEMS.map(s=>c.ar.span[s.id])]);
+      if(on.length>1)rows.push([c.name+' — combined (mean)',c.on?'yes':'no',c.w,...SYSTEMS.map(s=>fmtRating(rating(c,s.id)))]);
+    }else rows.push([c.name,c.on?'yes':'no',c.w,...SYSTEMS.map(s=>c.r[s.id])]);
+  });
   rows.push(['Cost ($, 1 = cheapest)',state.includeCost?'yes':'no',state.costW,...SYSTEMS.map(s=>state.cost[s.id])]);
   rows.push(['Weighted score (/5)','','',...SYSTEMS.map(s=>R.score[s.id]===null?'n/a':R.score[s.id].toFixed(2))]);
   rows.push(['Rank','','',...SYSTEMS.map(s=>R.score[s.id]===null?'not permitted':R.rank[s.id])]);

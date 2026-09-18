@@ -18,8 +18,11 @@ for the storeys above the podium:
 
 - Rates each system **1 (worst) to 5 (best)** on ten criteria: foundations, basement
   tanking (buoyancy), speed of construction, MEP flexibility, acoustics, aesthetics,
-  encapsulation (fire), government grants (GWP), biophilic design, and a renamable
-  "Other" row. Every rating carries an editable rationale note.
+  encapsulation (fire), government grants (GWP), biophilic design, and clear storey
+  height & column-free space. That last row has a two-way toggle: rate structural depth
+  (storey height), span flexibility (column-free space), or both — with both on, the row
+  rating is the mean of the two aspects and a click sets both. Every rating carries an
+  editable rationale note (one per aspect on the toggle row).
 - Each criterion can be **switched on or off** and given a **weight (1–5)**. The weighted
   score is Σ(weight × rating) ÷ Σ weight, shown live as a ranked bar chart.
 - A **cost rating** ($ to $$$$$) sits under each system and can be folded into the score
